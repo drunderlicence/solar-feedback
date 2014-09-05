@@ -6,22 +6,32 @@
 <meta charset="utf-8" />
 <script type="text/javascript">
 
+    function radioButtonsChecked( radioNodes )
+    {
+        var xs = Array.prototype.slice.call( radioNodes ); // convert NodeList into Array (FIXME doesn't work on ie8?)
+        return xs.some( function( x, i, xs ) { return x.checked; } );
+    }
+
     function validateFeedbackForm()
     {
-        var form = document.forms["feedbackForm"];
-        if ( form["feedbackDetails"].value == "" )
+        var form = document.forms['feedbackForm'];
+        if ( !radioButtonsChecked( form.feedbackType ) )
         {
-            alert( "Details of feedback must be given" );
+            alert( "Must indicate type of feedback" );
             return false;
         }
-        if ( form.feedbackResponse[0].checked == 0 && form.feedbackResponse[1].checked == false )
+        if ( form['feedbackDetails'].value == "" )
         {
-            alert( "Must indicate if a response is desired" );
+            alert( "Must give details of feedback" );
+            return false;
+        }
+        if ( !radioButtonsChecked( form.feedbackResponse ) )
+        {
+            alert( "Must indicate if response is required" );
             return false;
         }
 
         return true;
-
     }
 
 </script>
@@ -32,12 +42,15 @@
 
     <form name="feedbackForm"  action="process-feedback.php" onsubmit="return validateFeedbackForm()" method="post">
 
-    <label for="labelFeedbackType">Type of feedback:</label>
-    <select name="feedbackType" id="labelFeedbackType">
-        <option value="feedback">Feedback</option>
-        <option value="suggestion">Suggestion</option>
-        <option value="request">Request</option>
-    </select>
+    <fieldset>
+        <legend>Please indicate the type of feedback</legend>
+        <input type="radio" name="feedbackType" value="feedback" id="labelFeedbackTypeFeedback">
+            <label for="labelFeedbackTypeFeedback">Feedback</label>
+        <input type="radio" name="feedbackType" value="suggestion" id="labelFeedbackTypeSuggestion">
+            <label for="labelFeedbackTypeSuggestion">Suggestion</label>
+        <input type="radio" name="feedbackType" value="request" id="labelFeedbackTypeRequest">
+            <label for="labelFeedbackTypeRequest">Request</label>
+    </fieldset>
 
     <br />
 
