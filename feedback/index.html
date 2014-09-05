@@ -4,12 +4,33 @@
 <head>
 <title>Solar Feedback Form</title>
 <meta charset="utf-8" />
+<script type="text/javascript">
+
+    function validateFeedbackForm()
+    {
+        var form = document.forms["feedbackForm"];
+        if ( form["feedbackDetails"].value == "" )
+        {
+            alert( "Details of feedback must be given" );
+            return false;
+        }
+        if ( form.feedbackResponse[0].checked == 0 && form.feedbackResponse[1].checked == false )
+        {
+            alert( "Must indicate if a response is desired" );
+            return false;
+        }
+
+        return true;
+
+    }
+
+</script>
 </head>
 <body>
 
 <h3>Solar Feedback Form</h3>
 
-<form action="process-feedback.php" method="post">
+    <form name="feedbackForm"  action="process-feedback.php" onsubmit="return validateFeedbackForm()" method="post">
 
     <label for="labelFeedbackType">Type of feedback:</label>
     <select name="feedbackType" id="labelFeedbackType">
