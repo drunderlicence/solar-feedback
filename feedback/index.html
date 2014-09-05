@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html>
+<head>
+<title>Solar Feedback Form</title>
+<meta charset="utf-8" />
+</head>
+<body>
+
+<h3>Solar Feedback Form</h3>
+
+<form action="process-feedback.php" method="post">
+
+    <label for="labelFeedbackType">Type of feedback:</label>
+    <select name="feedbackType" id="labelFeedbackType">
+        <option value="feedback">Feedback</option>
+        <option value="suggestion">Suggestion</option>
+        <option value="request">Request</option>
+    </select>
+
+    <br />
+
+    <label for="labelFeedbackDetails">Details of feedback:</label>
+        <input type="text" name="feedbackDetails" id="labelFeedbackDetails" />
+
+    <fieldset>
+        <legend>Do you require a response to feedback?</legend>
+        <input type="radio" name="feedbackResponse" value="yes" id="labelFeedbackResponseYes">
+            <label for="labelFeedbackResponseYes">Yes</label>
+        <input type="radio" name="feedbackResponse" value="no" id="labelFeedbackReponseNo">
+            <label for="labelFeedbackResponseNo">No</label>
+    </fieldset>
+
+    <input type="reset" value="Clear form" />
+    <input type="submit" value="Submit feedback" />
+
+</form>
+
+</body>
+
+</html>
