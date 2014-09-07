@@ -6,8 +6,8 @@
     define ( "DB_PASSWORD", "vagrant" );
     define ( "DB_NAME", "solar_feedback" ); // FIXME or whatever we like
     define ( "TABLE_NAME", "Feedback" );
-
-    define ( "VERBOSE_DEBUG", false );
+    define ( "ADMIN_EMAIL", "test@test.com" ); // FIXME
+    define ( "VERBOSE_DEBUG", true );
 
     function Bail( $error )
     {
@@ -18,7 +18,8 @@
         }
         else
         {
-            echo "<p>Please contact XXX with details of the situtation</p>";
+            $admin = ADMIN_EMAIL;
+            echo "<p>We are sorry, there are an error submitting your request. Please contact $admin for assistance</p>";
         }
         exit(1);
     }
@@ -99,11 +100,13 @@
 
     // Insert data //
 
+    $dbFeedbackSchool = "<SCHOOL>";
+    $dbFeedbackUser = "<USER>";
     $dbFeedbackType = $con->real_escape_string( $_POST[ 'feedbackType' ] );
     $dbFeedbackDetails = $con->real_escape_string( $_POST[ 'feedbackDetails' ] );
     $dbFeedbackResponse = ( $_POST[ 'feedbackResponse' ] == $con->real_escape_string( "on" ) ) ? 1 : 0;
     $sql = "INSERT INTO `" . TABLE_NAME . "` (school, user, type, content, response)
-        VALUES ('<SCHOOL>', '<USER>', '$dbFeedbackType', '$dbFeedbackDetails', '$dbFeedbackResponse')";
+        VALUES ('$dbFeedbackSchool', '$dbFeedbackUser', '$dbFeedbackType', '$dbFeedbackDetails', '$dbFeedbackResponse')";
     if ( !$con->query( $sql ) )
     {
         Bail( "Insert row failed: " . $con->error );
@@ -116,6 +119,45 @@
         }
     }
 
+
+    // Send email //
+
+    $to = ADMIN_EMAIL;
+    $from = "test@test.com"; // FIXME something like this
+    $subject = "Solar Feedback Form";
+
+    $fd = $_POST[ 'feedbackDetails' ]; // Grab directly from post preserves newlines FIXME - safe?
+
+    $rspv = ( $dbFeedbackResponse == 1 ) ? "\r\n\r\nThe user requested a response to this feedback." : "";
+    $message =
+<<<EEMMAAIILLSS
+School: $dbFeedbackSchool
+User: $dbFeedbackUser
+Type: $dbFeedbackType
+Content:
+
+$fd
+
+----$rspv
+
+Love,
+Solar Feedback System
+EEMMAAIILLSS;
+
+    $headers  = "To: Admin <$to>" . "\r\n";
+    $headers .= "From: Solar Feedback <$from>" . "\r\n";
+
+    if ( !mail( $to, $subject, $message, $headers ) )
+    {
+        Bail( "Couldn't send notification email." );
+    }
+    else
+    {
+        if ( VERBOSE_DEBUG )
+        {
+            echo "<p>Sending email...</p>";
+        }
+    }
 
     // Show confirmation //
     // FIXME new page?
