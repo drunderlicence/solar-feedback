@@ -6,16 +6,10 @@
 <meta charset="utf-8" />
 <script type="text/javascript">
 
-    function radioButtonsChecked( radioNodes )
-    {
-        var xs = Array.prototype.slice.call( radioNodes ); // convert NodeList into Array (FIXME doesn't work on ie8?)
-        return xs.some( function( x, i, xs ) { return x.checked; } );
-    }
-
     function validateFeedbackForm()
     {
         var form = document.forms['feedbackForm'];
-        if ( !radioButtonsChecked( form.feedbackType ) )
+        if ( form['feedbackType'].value == "" )
         {
             alert( "Must indicate type of feedback" );
             return false;
@@ -23,11 +17,6 @@
         if ( form['feedbackDetails'].value == "" )
         {
             alert( "Must give details of feedback" );
-            return false;
-        }
-        if ( !radioButtonsChecked( form.feedbackResponse ) )
-        {
-            alert( "Must indicate if response is required" );
             return false;
         }
 
@@ -42,28 +31,25 @@
 
     <form name="feedbackForm"  action="process-feedback.php" onsubmit="return validateFeedbackForm()" method="post">
 
-    <fieldset>
-        <legend>Please indicate the type of feedback</legend>
-        <input type="radio" name="feedbackType" value="feedback" id="labelFeedbackTypeFeedback">
-            <label for="labelFeedbackTypeFeedback">Feedback</label>
-        <input type="radio" name="feedbackType" value="suggestion" id="labelFeedbackTypeSuggestion">
-            <label for="labelFeedbackTypeSuggestion">Suggestion</label>
-        <input type="radio" name="feedbackType" value="request" id="labelFeedbackTypeRequest">
-            <label for="labelFeedbackTypeRequest">Request</label>
-    </fieldset>
+        <label for="feedbackType">Please indicate type of feedback:</label>
+        <select name="feedbackType">
+            <option value="" selected></option>
+            <option value="feedback">Feedback</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="request">Request</option>
+        </select>
 
     <br />
 
-    <label for="labelFeedbackDetails">Details of feedback:</label>
-        <input type="text" name="feedbackDetails" id="labelFeedbackDetails" />
+    <label for="feedbackDetails">Details of feedback:</label>
+        <textarea name="feedbackDetails" rows="10" cols="50"></textarea>
 
-    <fieldset>
-        <legend>Do you require a response to feedback?</legend>
-        <input type="radio" name="feedbackResponse" value="yes" id="labelFeedbackResponseYes">
-            <label for="labelFeedbackResponseYes">Yes</label>
-        <input type="radio" name="feedbackResponse" value="no" id="labelFeedbackReponseNo">
-            <label for="labelFeedbackResponseNo">No</label>
-    </fieldset>
+    <br />
+
+    <label for="feedbackResponse">Do you require a response to your feedback?</label>
+        <input type="checkbox" name="feedbackResponse" />
+
+    <br />
 
     <input type="reset" value="Clear form" />
     <input type="submit" value="Submit feedback" />
