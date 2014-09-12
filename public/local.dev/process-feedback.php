@@ -160,13 +160,16 @@ EEMMAAIILLSS;
     }
 
     // Show confirmation //
-    // FIXME new page?
 
+    include 'feedback-received.html'; // FIXME there are many ways we can do this, change to be consistent with rest of site
+
+    /* FIXME an alternative method
     echo '<h3>Thank you for your feedback</h3>';
 
     if ( $dbFeedbackResponse == 1 )
     {
         echo '<p>We will get back to you soon</p>';
     }
+     */
 
     $con->close();
