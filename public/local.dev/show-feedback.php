@@ -24,6 +24,14 @@
         exit(1);
     }
 
+    function DebugPrint( $message )
+    {
+        if ( VERBOSE_DEBUG )
+        {
+            echo "<p>$message</p>";
+        }
+    }
+
 
     // Connect to mysql //
 
@@ -34,10 +42,7 @@
     }
     else
     {
-        if ( VERBOSE_DEBUG )
-        {
-            echo '<p>Connected to mysql...</p>';
-        }
+        DebugPrint( '<p>Connected to mysql...</p>' );
     }
 
 
@@ -45,10 +50,7 @@
 
     if ( !$con->select_db( DB_NAME ) )
     {
-        if ( VERBOSE_DEBUG )
-        {
-            echo '<p>Creating db...</p>';
-        }
+        DebugPrint( '<p>Creating db...</p>' );
         $sql = 'CREATE DATABASE ' . DB_NAME;
         if ( $con->query( $sql ) )
         {
@@ -63,10 +65,7 @@
         }
     }
 
-    if ( VERBOSE_DEBUG )
-    {
-        echo '<p>Selected db...</p>';
-    }
+    DebugPrint( '<p>Selected db...</p>' );
 
     // Create table if necessary //
 
@@ -77,10 +76,7 @@
 
     if ( !TableExists( $con, TABLE_NAME ) )
     {
-        if ( VERBOSE_DEBUG )
-        {
-            echo '<p>Creating table...</p>';
-        }
+        DebugPrint( '<p>Creating table...</p>' );
         $sql = 'CREATE TABLE `' . TABLE_NAME . '`
             (
                 feedback_id INT NOT NULL AUTO_INCREMENT,
