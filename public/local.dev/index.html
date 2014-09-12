@@ -6,55 +6,72 @@
 <meta charset="utf-8" />
 <script type="text/javascript">
 
+    function enforcePredicate( predicate, warning )
+    {
+        if ( predicate )
+        {
+            document.getElementById( warning ).style.display = "none";
+            return true;
+        }
+        else
+        {
+            document.getElementById( warning ).style.display = "inline";
+            return false;
+        }
+    }
+
     function validateFeedbackForm()
     {
         var form = document.forms['feedbackForm'];
-        if ( form['feedbackType'].value == "" )
-        {
-            alert( "Must indicate type of feedback" );
-            return false;
-        }
-        if ( form['feedbackDetails'].value == "" )
-        {
-            alert( "Must give details of feedback" );
-            return false;
-        }
+        var formFilled = true;
 
-        return true;
+        formFilled = enforcePredicate( form['feedbackType'].value != "", "feedbackType-warning" ) && formFilled; // goes after or function is shortcutted when formFilled is false
+        formFilled = enforcePredicate( form['feedbackDetails'].value != "", "feedbackDetails-warning" ) && formFilled;
+
+        return formFilled;
     }
 
 </script>
+<style type="text/css">
+    .form-predicate {
+        color:red;
+        border:1px solid red;
+        display:none;
+    }
+</style>
 </head>
 <body>
 
-<h3>Solar Feedback Form</h3>
+    <h3>Solar Feedback Form</h3>
 
     <form name="feedbackForm"  action="process-feedback.php" onsubmit="return validateFeedbackForm()" method="post">
 
         <label for="feedbackType">Please indicate type of feedback:</label>
-        <select name="feedbackType">
-            <option value="" selected></option>
-            <option value="feedback">Feedback</option>
-            <option value="suggestion">Suggestion</option>
-            <option value="request">Request</option>
-        </select>
+            <select name="feedbackType">
+                <option value="" selected></option>
+                <option value="feedback">Feedback</option>
+                <option value="suggestion">Suggestion</option>
+                <option value="request">Request</option>
+            </select>
+            <p class="form-predicate" id="feedbackType-warning">Please indicate the type of feedback you are providing.</p>
 
-    <br />
+        <br />
 
-    <label for="feedbackDetails">Details of feedback:</label>
-        <textarea name="feedbackDetails" rows="10" cols="50"></textarea>
+        <label for="feedbackDetails">Details of feedback: <br /></label>
+            <textarea name="feedbackDetails" rows="10" cols="50"></textarea>
+            <p class="form-predicate" id="feedbackDetails-warning">Please provide some details for your feedback.</p>
 
-    <br />
+        <br />
 
-    <label for="feedbackResponse">Do you require a response to your feedback?</label>
-        <input type="checkbox" name="feedbackResponse" />
+        <label for="feedbackResponse">Do you require a response to your feedback?</label>
+            <input type="checkbox" name="feedbackResponse" />
 
-    <br />
+        <br />
 
-    <input type="reset" value="Clear form" />
-    <input type="submit" value="Submit feedback" />
+        <input type="reset" value="Clear form" />
+        <input type="submit" value="Submit feedback" />
 
-</form>
+    </form>
 
 </body>
 
