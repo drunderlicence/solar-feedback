@@ -1,5 +1,9 @@
 <?php
 
+    //ini_set('display_errors',1);
+    //ini_set('display_startup_errors',1);
+    //error_reporting(-1);
+
     // CONSTANTS //
 
     define ( 'DB_USERNAME', 'root' );
@@ -8,6 +12,9 @@
     define ( 'TABLE_NAME', 'Feedback' );
     define ( 'ADMIN_EMAIL', 'test@test.com' ); // FIXME
     define ( 'VERBOSE_DEBUG', true );
+
+
+    // FUNCTIONS //
 
     function Bail( $error )
     {
@@ -33,7 +40,25 @@
     }
 
 
-    // Connect to mysql //
+    // VALIDATE DATA //
+
+    $feedbackSchool = '<SCHOOL>'; // FIXME replace with real values
+    $feedbackUser = '<USER>';     //
+    $feedbackType = $_POST[ 'feedbackType' ];
+    $feedbackDetails = $_POST[ 'feedbackDetails' ];
+    $feedbackResponse = ( $_POST[ 'feedbackResponse' ] == 'on' ) ? true : false;
+
+    if ( $feedbackType == null || $feedbackType == "" )
+    {
+        Bail( 'Feedback type not found in post' );
+    }
+    else if ( $feedbackDetails == null || $feedbackDetails == "" )
+    {
+        Bail( 'Feedback details not found in post' );
+    }
+
+
+    // CONNECT TO MYSQL //
 
     $con = new mysqli( 'localhost', DB_USERNAME, DB_PASSWORD );
     if ( mysqli_connect_errno() )
@@ -46,7 +71,7 @@
     }
 
 
-    // Select or create db //
+    // SELECT OR CREATE DB //
 
     if ( !$con->select_db( DB_NAME ) )
     {
@@ -67,7 +92,8 @@
 
     DebugPrint( '<p>Selected db...</p>' );
 
-    // Create table if necessary //
+
+    // CREATE TABLE IF NECESSARY //
 
     function TableExists( $con, $tableName )
     {
@@ -94,13 +120,13 @@
     }
 
 
-    // Insert data //
+    // INSERT DATA //
 
-    $dbFeedbackSchool = '<SCHOOL>';
-    $dbFeedbackUser = '<USER>';
-    $dbFeedbackType = $con->real_escape_string( $_POST[ 'feedbackType' ] );
-    $dbFeedbackDetails = $con->real_escape_string( $_POST[ 'feedbackDetails' ] );
-    $dbFeedbackResponse = ( $_POST[ 'feedbackResponse' ] == $con->real_escape_string( 'on' ) ) ? 1 : 0;
+    $dbFeedbackSchool = $con->real_escape_string( $feedbackSchool );
+    $dbFeedbackUser = $con->real_escape_string( $feedbackUser );
+    $dbFeedbackType = $con->real_escape_string( $feedbackType );
+    $dbFeedbackDetails = $con->real_escape_string( $feedbackDetails );
+    $dbFeedbackResponse = ( $feedbackResponse ) ? 1 : 0;
     $sql = "INSERT INTO `" . TABLE_NAME . "` (school, user, type, content, response)
         VALUES ('$dbFeedbackSchool', '$dbFeedbackUser', '$dbFeedbackType', '$dbFeedbackDetails', '$dbFeedbackResponse')";
     if ( !$con->query( $sql ) )
@@ -113,7 +139,7 @@
     }
 
 
-    // Send email //
+    // SEND EMAIL //
 
     $to = ADMIN_EMAIL;
     $from = 'test@test.com'; // FIXME something like this
@@ -149,7 +175,8 @@ EEMMAAIILLSS;
         DebugPrint( '<p>Sending email...</p>' );
     }
 
-    // Show confirmation //
+
+    // SHOW CONFIRMATION //
 
     include 'feedback-received.html'; // FIXME there are many ways we can do this, change to be consistent with rest of site
 
